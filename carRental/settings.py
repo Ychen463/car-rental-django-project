@@ -25,7 +25,8 @@ SECRET_KEY = '3^zse=@ro&wjju4v^7^)d7jm)%q8_@mskv5s_vj#=-u+30^isw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+# USE_TZ = True
+# TIME_ZONE = 'UTC'
 ALLOWED_HOSTS = []
 
 
@@ -77,9 +78,13 @@ WSGI_APPLICATION = 'carRental.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME':  os.path.join(BASE_DIR, 'db.sqlite3'),
-        #  BASE_DIR / 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME':  'carRental_db',
+        'USER': 'postgres',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
+
     }
 }
 
@@ -126,3 +131,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'carRental/static'),
 ]
+
+# Media settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
