@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Main page: pages.url
     path('', include('pages.urls')),
-    # path('cars/', include('cars.urls')),
+    path('cars/', include('cars.urls')),
     # path('accounts/', include('accounts.urls')),
     # path('socialaccounts/', include('allauth.urls')),
     # path('contacts/', include('contacts.urls')),
