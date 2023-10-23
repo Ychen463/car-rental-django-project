@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from django.contrib.messages import constants as messages
 import os
 from pathlib import Path
 
@@ -28,14 +29,18 @@ DEBUG = True
 # USE_TZ = True
 # TIME_ZONE = 'UTC'
 ALLOWED_HOSTS = []
-CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
+CKEDITOR_UPLOAD_PATH = 'uploads/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+LOGIN_REDIRECT_URL = 'dashboard'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'pages.apps.PagesConfig',
     'cars.apps.CarsConfig',
+    'contacts.apps.ContactsConfig',
+    'accounts.apps.AccountsConfig',
     'ckeditor',
     'ckeditor_uploader',
     'django.contrib.admin',
@@ -44,33 +49,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pages.apps.PagesConfig',
     'django.contrib.humanize',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    # Providers
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
 
 ]
 
-# INSTALLED_APPS = [
-#     'cars.apps.CarsConfig',
-#     'pages.apps.PagesConfig',
-#     'accounts.apps.AccountsConfig',
-#     'contacts.apps.ContactsConfig',
-#     'django.contrib.admin',
-#     'django.contrib.auth',
-#     'django.contrib.contenttypes',
-#     'django.contrib.sessions',
-#     'django.contrib.messages',
-#     'django.contrib.staticfiles',
-#     'ckeditor',
-#     'django.contrib.humanize',
-#     'django.contrib.sites',
-#     'allauth',
-#     'allauth.account',
-#     'allauth.socialaccount',
-
-#     # Providers
-#     'allauth.socialaccount.providers.facebook',
-#     'allauth.socialaccount.providers.google',
-# ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -80,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+
 ]
 
 ROOT_URLCONF = 'carRental.urls'
@@ -253,3 +246,18 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+# Messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
+
+# Social Auth
+SITE_ID = 1
+
+# # Email sending
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_USE_TLS = True
