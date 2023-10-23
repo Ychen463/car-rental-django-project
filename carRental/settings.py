@@ -29,7 +29,8 @@ SECRET_KEY = '3^zse=@ro&wjju4v^7^)d7jm)%q8_@mskv5s_vj#=-u+30^isw'
 DEBUG = False
 # USE_TZ = True
 # TIME_ZONE = 'UTC'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['pacific-scrubland-72724-6e4b99d4b1eb.herokuapp.com',
+                 'carRentalApp.co', 'www.carRentalApp.co']
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
