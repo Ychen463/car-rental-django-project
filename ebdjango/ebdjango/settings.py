@@ -19,35 +19,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '53e9tux9r1fn85b5hg#d^+yv4d7j9!il-h+mgkz6okmsw60s4#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-TIME_ZONE = 'US/Pacific'
+DEBUG = True
+
 ALLOWED_HOSTS = ['django-env.eba-gmpbccce.us-east-1.elasticbeanstalk.com',
                  'django-env.eba-msqjxydh.us-west-2.elasticbeanstalk.com']
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'carRental/static'),
-]
-# Media settings
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
 
 # Application definition
 
@@ -58,24 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'pages.apps.PagesConfig',
-    'cars.apps.CarsConfig',
-    'contacts.apps.ContactsConfig',
-    'accounts.apps.AccountsConfig',
-    'ckeditor',
-    'ckeditor_uploader',
-    'django.contrib.humanize',
-
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-
-    # Providers
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
-
 ]
 
 MIDDLEWARE = [
@@ -86,14 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'allauth.account.middleware.AccountMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-# ROOT_URLCONF = 'ebdjango.urls'
-ROOT_URLCONF = 'carRental.urls'
-
+ROOT_URLCONF = 'ebdjango.urls'
 
 TEMPLATES = [
     {
@@ -110,27 +67,23 @@ TEMPLATES = [
         },
     },
 ]
-WSGI_APPLICATION = 'carRental.wsgi.application'
 
-# WSGI_APPLICATION = 'ebdjango.wsgi.application'
+WSGI_APPLICATION = 'ebdjango.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-DATABASES = {'default': dj_database_url.config(
-    default='postgres://postgres:postgres:@localhost/carRental_db')}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -148,122 +101,21 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Internationalization
+# https://docs.djangoproject.com/en/2.2/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
+# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'carRental/static'),
-]
-
-# Media settings
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'full',
-        'height': 300,
-        'width': 300,
-    },
-    'portal_config': {
-        # 'skin': 'moono',
-        # 'skin': 'office2013',
-        'toolbar_Basic': [
-            ['Source', '-', 'Bold', 'Italic']
-        ],
-        'toolbar_YourCustomToolbarConfig': [
-            {'name': 'document', 'items': [
-                'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates'
-            ]},
-            {'name': 'clipboard', 'items': [
-                'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo'
-            ]},
-            {'name': 'editing', 'items': [
-                'Find', 'Replace', '-', 'SelectAll']},
-            {'name': 'forms',
-             'items': [
-                 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea',
-                 'Select', 'Button', 'ImageButton', 'HiddenField'
-             ]},
-            '/',
-            {'name': 'basicstyles',
-             'items': [
-                 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript',
-                 'Superscript', '-', 'RemoveFormat'
-             ]},
-            {'name': 'paragraph',
-             'items': [
-                 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent',
-                 '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft',
-                 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-',
-                 'BidiLtr', 'BidiRtl', 'Language'
-             ]},
-            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-            {'name': 'insert',
-             'items': [
-                 'Image', 'Table', 'HorizontalRule',
-                 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe'
-             ]},
-            '/',
-            {'name': 'styles', 'items': [
-                'Styles', 'Format', 'Font', 'FontSize']},
-            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
-            {'name': 'about', 'items': ['About']},
-            '/',  # put this to force next toolbar on new line
-            {'name': 'yourcustomtools', 'items': [
-                # put the name of your editor.ui.addButton here
-                'Preview',
-                'Maximize',
-
-            ]},
-        ],
-        'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
-        # 'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
-        # 'height': 291,
-        # 'width': '100%',
-        # 'filebrowserWindowHeight': 725,
-        # 'filebrowserWindowWidth': 940,
-        # 'toolbarCanCollapse': True,
-        # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
-        'tabSpaces': 4,
-        'extraPlugins': ','.join([
-            'uploadimage',  # the upload image feature
-            # your extra plugins here
-            'div',
-            'autolink',
-            'autoembed',
-            'embedsemantic',
-            'autogrow',
-            # 'devtools',
-            'widget',
-            'lineutils',
-            'clipboard',
-            'dialog',
-            'dialogui',
-            'elementspath'
-        ]),
-    }
-}
-
-# Messages
-MESSAGE_TAGS = {
-    messages.ERROR: 'danger',
-}
-
-# Social Auth
-SITE_ID = 1
-
-# # Email sending
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = ''
-# EMAIL_USE_TLS = True
-
-# Whitenoise settings
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
