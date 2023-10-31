@@ -26,10 +26,10 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = '3^zse=@ro&wjju4v^7^)d7jm)%q8_@mskv5s_vj#=-u+30^isw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # USE_TZ = True
 # TIME_ZONE = 'UTC'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -115,6 +115,7 @@ WSGI_APPLICATION = 'carRental.wsgi.application'
 DATABASES = {'default': dj_database_url.config(
     default='postgres://postgres:postgres:@localhost/carRental_db')}
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
