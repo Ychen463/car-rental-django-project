@@ -29,8 +29,7 @@ SECRET_KEY = '3^zse=@ro&wjju4v^7^)d7jm)%q8_@mskv5s_vj#=-u+30^isw'
 DEBUG = True
 # USE_TZ = True
 # TIME_ZONE = 'UTC'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-                 'django-env.eba-gmpbccce.us-east-1.elasticbeanstalk.com', 'django-env.eba-msqjxydh.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '54.82.19.160']
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
