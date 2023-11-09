@@ -66,6 +66,14 @@ class Car(models.Model):
     for r in range(2000, (datetime.now().year+1)):
         year_choice.append((r, r))
 
+    # pickup_date_choice = []
+    # for r in range((datetime.now()), datetime(2025, 1, 1)):
+    #     year_choice.append((r, r))
+
+    # dropoff_date_choice = []
+    # for r in range((datetime.now()), datetime(2025, 1, 1)):
+    #     year_choice.append((r, r))
+
     features_choices = (
         ('Cruise Control', 'Cruise Control'),
         ('Audio Interface', 'Audio Interface'),
@@ -95,6 +103,9 @@ class Car(models.Model):
     city = models.CharField(max_length=100)
     color = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
+    # pickupdate = models.DateTimeField(default=datetime.now, blank=True)
+    # dropoffdate = models.DateTimeField(default=datetime.now, blank=True)
+
     year = models.IntegerField(('year'), choices=year_choice)
     condition = models.CharField(max_length=100)
     price = models.IntegerField()
