@@ -11,6 +11,15 @@ def cars(request):
     paged_cars = paginator.get_page(page)
     model_search = Car.objects.values_list('model', flat=True).distinct()
     city_search = Car.objects.values_list('city', flat=True).distinct()
+    pickup_location_serach = Car.objects.values_list(
+        'pickup_location', flat=True).distinct()
+    dropoff_location_serach = Car.objects.values_list(
+        'dropoff_location', flat=True).distinct()
+    pickup_date_search = Car.objects.values_list(
+        'pickup_date', flat=True).distinct()
+    dropoff_date_search = Car.objects.values_list(
+        'dropoff_date', flat=True).distinct()
+
     year_search = Car.objects.values_list('year', flat=True).distinct()
     body_style_search = Car.objects.values_list(
         'body_style', flat=True).distinct()
@@ -21,6 +30,10 @@ def cars(request):
         'model_search': model_search,
         'city_search': city_search,
         'year_search': year_search,
+        'pickup_location_serach': pickup_location_serach,
+        'dropoff_location_serach': dropoff_location_serach,
+        'pickup_date_serach': pickup_date_search,
+        'dropoff_date_serach': dropoff_date_search,
         'body_style_search': body_style_search,
     }
     return render(request, 'cars/cars.html', data)
@@ -39,6 +52,14 @@ def search(request):
     cars = Car.objects.order_by('-created_date')
     model_search = Car.objects.values_list('model', flat=True).distinct()
     city_search = Car.objects.values_list('city', flat=True).distinct()
+    pickup_location_serach = Car.objects.values_list(
+        'pickup_location', flat=True).distinct()
+    dropoff_location_serach = Car.objects.values_list(
+        'dropoff_location', flat=True).distinct()
+    pickup_date_search = Car.objects.values_list(
+        'pickup_date', flat=True).distinct()
+    dropoff_date_search = Car.objects.values_list(
+        'dropoff_date', flat=True).distinct()
     year_search = Car.objects.values_list('year', flat=True).distinct()
     body_style_search = Car.objects.values_list(
         'body_style', flat=True).distinct()
@@ -59,7 +80,22 @@ def search(request):
         city = request.GET['city']
         if city:
             cars = cars.filter(city__iexact=city)
-
+    if 'pickup_loacation' in request.GET:
+        pickup_loacation = request.GET['pickup_location']
+        if pickup_loacation:
+            cars = cars.filter(pickup_loacation__iexact=pickup_loacation)
+    if 'dropoff_loacation' in request.GET:
+        dropoff_location = request.GET['dropoff_location']
+        if dropoff_location:
+            cars = cars.filter(dropoff_locationn__iexact=dropoff_location)
+    if 'pickup_date' in request.GET:
+        pickup_date = request.GET['pickup_date']
+        if pickup_date:
+            cars = cars.filter(pickup_date__iexact=pickup_date)
+    if 'dropoff_date' in request.GET:
+        dropoff_date = request.GET['dropoff_date']
+        if dropoff_date:
+            cars = cars.filter(dropoff_date__iexact=dropoff_date)
     if 'year' in request.GET:
         year = request.GET['year']
         if year:

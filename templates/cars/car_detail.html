@@ -151,7 +151,7 @@
                 <div class="sidebar-right">
                     <!-- Advanced search start -->
                     <div class="widget advanced-search d-none-992">
-                        <button class="btn btn-outline-danger bomd btn-block btn-lg" data-toggle="modal" data-target="#inquiryModal">Send message</button>
+                        <button class="btn btn-outline-danger bomd btn-block btn-lg" data-toggle="modal" data-target="#inquiryModal">Reserve Now</button>
 
 
                         <br>
@@ -218,7 +218,23 @@
                             </button>
                           </div>
                           <div class="modal-body">
+                            <h5>Location & Date</h5>
+                                <div class="form-group">
+                                    <input type="date" name="pickup_date" class="form-control" placeholder="Pickup Date" required>
+                                    <input type="date" name="dropoff_date" class="form-control" placeholder="Drop-off Date" required>
+                                    <input type="text" name="pickup_location" class="form-control" placeholder="Pick Up Location" required>
+                                    <input type="text" name="dropoff_location" class="form-control" placeholder="Drop Off Location" required>
+                                    <!-- <input type="text" name="car_model" class="form-control" value="{{single_car.model}}" readonly> -->
+                                    <div class="form-group">
+                                        <input type="text" name="car_title" class="form-control" value="{{single_car.car_title}}" readonly>
+                                      </div>
+                                    <img src="{{single_car.car_photo.url}}" class="img-fluid" alt="slider-car">
+                                </div>
+                            <!-- Divider -->
+                            <hr>
                             <form action="{% url 'inquiry' %}" method="POST">
+                                <h5>Personal Information</h5>
+
                                 {% csrf_token %}
                                 {% if user.is_authenticated %}
                                   <input type="hidden" name="user_id" value="{{user.id}}">
@@ -227,8 +243,9 @@
                                 {% endif %} 
                                 <input type="hidden" name="car_id" value="{{single_car.id}}">
                                 <div class="form-group">
-                                  <label for="name" class="col-form-label">Hello, My Name is</label>
+                                  <!-- <label for="name" class="col-form-label">Hello, My Name is</label> -->
                                   <div class="row">
+
                                     <div class="col">
                                       <input type="text" name="first_name" class="form-control" placeholder="First Name"
                                       {% if user.is_authenticated %} value="{{user.first_name}}"  {% endif %} required>
@@ -239,23 +256,16 @@
                                     </div>
                                   </div>
                                 </div>
-                                  <div class="form-group">
-                                      <select class="form-control" id="sel1" name="customer_need">
-                                        <option value="I'm interested in this">I'm interested in this</option>
-                                        <option value="I'd like to know your best price for this">I'd like to know your best price for this</option>
-                                        <option value="I'd like to test drive this">I'd like to test drive this</option>
-                                        <option value="I'd like a history report for this">I'd like a history report for this</option>
-                                      </select>
-                                    </div>
+                                  
                                 
-                                <div class="form-group">
-                                  <input type="text" name="car_title" class="form-control" value="{{single_car.car_title}}" readonly>
-                                </div>
+                                
                                
                                 <div class="form-group">
-                                  <label for="name" class="col-form-label">I live in</label>
-                                  <div class="row">
-                                    <div class="col">
+                                  <label for="name" class="col-form-label">Address</label>
+                                  <div class="col">
+                                        <input type="text" name="address" class="form-control" placeholder="Address" required>
+                                    </div>
+                                     <div class="col">
                                       <input type="text" name="city" class="form-control" placeholder="City" required>
                                     </div>
                                     <div class="col">
@@ -267,28 +277,28 @@
                                 <div class="form-group">
                                   <div class="row">
                                     <div class="col">
-                                        <label for="name" class="col-form-label">You can reach me by email at</label>
+                                        <label for="name" class="col-form-label">Email</label>
                                       <input type="email" name="email" class="form-control" placeholder="Email Address"
                                        {% if user.is_authenticated %} value="{{user.email}}"  {% endif %} required>
                                     </div>
                                     <div class="col">
-                                        <label for="phone" class="col-form-label">or by phone at</label>
+                                        <label for="phone" class="col-form-label">Phone</label>
                                       <input type="text" name="phone" placeholder="Phone Number (optional)" class="form-control">
                                     </div>
                                   </div>
                                 </div>
 
-                                <div class="form-group">
-                                  <label for="message" class="col-form-label">Add comments</label>
-                                  <textarea name="message" class="form-control" placeholder="Enter your message here (optional)"></textarea>
-                                </div>
+                                
                                 <hr>
-                                <input type="submit" value="Send" class="btn btn-block btn-danger">
+                                <input type="submit" value="Reserve Now" class="btn btn-block btn-danger">
                             </form>
                           </div>
                         </div>
                       </div>
                     </div>
+
+                    <!-- Inquiry Modal -->
+
                     <!-- Question start -->
                     <div class="widget question">
                         <h5 class="sidebar-title">Get a Question?</h5>
