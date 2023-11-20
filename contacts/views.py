@@ -45,5 +45,5 @@ def inquiry(request):
 
         contact.save()
         messages.success(
-            request, 'Your request has been submitted, we will get back to you shortly.')
-        return redirect('/cars/'+car_id)
+            request, 'Your order has been submitted, see you shortly.')
+        return redirect('/accounts/dashboard')

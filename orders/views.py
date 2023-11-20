@@ -25,10 +25,10 @@ def reserve(request):
         if request.user.is_authenticated:
             user_id = request.user.id
             has_contacted = Contact.objects.all().filter(car_id=car_id, user_id=user_id)
-            if has_contacted:
-                messages.error(
-                    request, 'You have already made an inquiry about this car. Please wait until we get back to you.')
-                return redirect('/cars/'+car_id)
+            # if has_contacted:
+            #     messages.error(
+            #         request, 'You have already made an inquiry about this car. Please wait until we get back to you.')
+            #     return redirect('/cars/'+car_id)
         contact = Contact.objects.get(id=user_id)
 
         order = Order(car_id=car_id, car_title=car_title,
@@ -39,6 +39,5 @@ def reserve(request):
 
         order.save()
         messages.success(
-            request, 'Your request has been submitted, we will get back to you shortly.')
-        # return redirect('/cars/'+car_id)
-        return render(request, 'cars/search.html')
+            request, 'Your order has been submitted, see you shortly.')
+        return redirect('/accounts/dashboard')
