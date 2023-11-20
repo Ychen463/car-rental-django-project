@@ -73,11 +73,11 @@
       <!-- Pick-up Location -->
       <div class="form-group">
           <select class="form-control search-fields" name="city">
-            <option selected="true" disabled="disabled">Pick-up Location</option>
-            {% for city in city_search %}
-              <option value="{{city}}">{{city}}</option>
+            <option selected="true" disabled="disabled">Select Pick-up Location</option>
+            {% for location in city_search %}
+              <option value="{{location}}">{{location}}</option>
             {% endfor %}
-        </select>
+          </select>
 
       </div>
 

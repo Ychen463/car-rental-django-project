@@ -115,8 +115,6 @@ class Car(models.Model):
     city = models.CharField(max_length=100)
     color = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
-    # pickupdate = models.DateTimeField(default=datetime.now, blank=True)
-    # dropoffdate = models.DateTimeField(default=datetime.now, blank=True)
 
     year = models.IntegerField(('year'), choices=year_choice)
     condition = models.CharField(max_length=100)

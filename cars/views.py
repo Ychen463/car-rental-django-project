@@ -11,17 +11,12 @@ def cars(request):
     paged_cars = paginator.get_page(page)
     model_search = Car.objects.values_list('model', flat=True).distinct()
     city_search = Car.objects.values_list('city', flat=True).distinct()
-    pickup_location_serach = Car.objects.values_list(
+    pickup_location_search = Car.objects.values_list(
         'pickup_location', flat=True).distinct()
-    dropoff_location_serach = Car.objects.values_list(
+    dropoff_location_search = Car.objects.values_list(
         'dropoff_location', flat=True).distinct()
-    pickup_avail_locations = Car.objects.values_list(
-        'pickup_location', flat=True).all()  # Replace with your actual model and query
-
     pickup_date_search = Car.objects.values_list(
         'pickup_date', flat=True).distinct()
-    pickup_avail_dates = Car.objects.values_list(
-        'pickup_date', flat=True).all()
     dropoff_date_search = Car.objects.values_list(
         'dropoff_date', flat=True).distinct()
 
@@ -35,10 +30,10 @@ def cars(request):
         'model_search': model_search,
         'city_search': city_search,
         'year_search': year_search,
-        'pickup_location_serach': pickup_location_serach,
-        'dropoff_location_serach': dropoff_location_serach,
-        'pickup_date_serach': pickup_date_search,
-        'dropoff_date_serach': dropoff_date_search,
+        'pickup_location_search': pickup_location_search,
+        'dropoff_location_search': dropoff_location_search,
+        'pickup_date_search': pickup_date_search,
+        'dropoff_date_search': dropoff_date_search,
         'body_style_search': body_style_search,
     }
     return render(request, 'cars/cars.html', data)
@@ -46,14 +41,14 @@ def cars(request):
 
 def car_detail(request, id):
     single_car = get_object_or_404(Car, pk=id)
-    pickup_location_serach = Car.objects.values_list(
+    pickup_location_search = Car.objects.values_list(
         'pickup_location', flat=True).distinct()
-    dropoff_location_serach = Car.objects.values_list(
+    dropoff_location_search = Car.objects.values_list(
         'dropoff_location', flat=True).distinct()
     data = {
         'single_car': single_car,
-        'pickup_location_serach': pickup_location_serach,
-        'dropoff_location_serach': dropoff_location_serach,
+        'pickup_location_search': pickup_location_search,
+        'dropoff_location_search': dropoff_location_search,
     }
 
     return render(request, 'cars/car_detail.html', data)
@@ -63,7 +58,7 @@ def search(request):
     cars = Car.objects.order_by('-created_date')
     model_search = Car.objects.values_list('model', flat=True).distinct()
     city_search = Car.objects.values_list('city', flat=True).distinct()
-    pickup_location_serach = Car.objects.values_list(
+    pickup_location_search = Car.objects.values_list(
         'pickup_location', flat=True).distinct()
     dropoff_location_search = Car.objects.values_list(
         'dropoff_location', flat=True).distinct()
@@ -91,11 +86,11 @@ def search(request):
         city = request.GET['city']
         if city:
             cars = cars.filter(city__iexact=city)
-    if 'pickup_loacation' in request.GET:
-        pickup_loacation = request.GET['pickup_location']
-        if pickup_loacation:
-            cars = cars.filter(pickup_loacation__iexact=pickup_loacation)
-    if 'dropoff_loacation' in request.GET:
+    if 'pickup_location' in request.GET:
+        pickup_location = request.GET['pickup_location']
+        if pickup_location:
+            cars = cars.filter(pickup_loacation__iexact=pickup_location)
+    if 'dropoff_location' in request.GET:
         dropoff_location = request.GET['dropoff_location']
         if dropoff_location:
             cars = cars.filter(dropoff_locationn__iexact=dropoff_location)
@@ -127,7 +122,7 @@ def search(request):
         'cars': cars,
         'model_search': model_search,
         'city_search': city_search,
-        'pickup_location_search': pickup_location_serach,
+        'pickup_location_search': pickup_location_search,
         'dropoff_location_search': dropoff_location_search,
         'pickup_date_search': pickup_date_search,
         'dropoff_date_search': dropoff_date_search,

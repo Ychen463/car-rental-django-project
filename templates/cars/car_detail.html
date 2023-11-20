@@ -227,7 +227,7 @@
                                     <!-- Pickup Location -->
                                     <select name="pickup_location" class="form-control" required>
                                         <option value="">Select Pick Up Location</option>
-                                            {% for location in pickup_location_serach %}
+                                            {% for location in pickup_location_search %}
                                                 <option value="{{ location }}">{{ location }}</option>
                                             {% endfor %}
                                     </select>
@@ -235,7 +235,7 @@
                                     <!-- Dropoff Location -->
                                     <select name="dropoff_location" class="form-control" required>
                                         <option value="">Select Drop Off Location</option>
-                                            {% for location in pickup_location_serach %}
+                                            {% for location in dropoff_location_search %}
                                                 <option value="{{ location }}">{{ location }}</option>
                                             {% endfor %}
 
