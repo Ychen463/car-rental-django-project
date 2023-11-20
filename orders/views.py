@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 # Create your views here.
 
 
-def inquiry(request):
+def reserve(request):
     if request.method == 'POST':
         car_id = request.POST['car_id']
         car_title = request.POST['car_title']
@@ -29,12 +29,16 @@ def inquiry(request):
                 messages.error(
                     request, 'You have already made an inquiry about this car. Please wait until we get back to you.')
                 return redirect('/cars/'+car_id)
+        contact = Contact.objects.get(id=user_id)
 
-        order = Order(car_id=car_id, car_title=car_title, user_id=user_id,
+        order = Order(car_id=car_id, car_title=car_title,
+                      #   user_id=user_id,
+                      user=contact,
                       first_name=first_name, last_name=last_name,  city=city, state=state, email=email, phone=phone,
                       pickup_date=pickup_date, dropoff_date=dropoff_date, pickup_location=pickup_location, dropoff_location=dropoff_location)
 
         order.save()
         messages.success(
             request, 'Your request has been submitted, we will get back to you shortly.')
-        return redirect('/cars/'+car_id)
+        # return redirect('/cars/'+car_id)
+        return render(request, 'cars/search.html')

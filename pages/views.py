@@ -42,6 +42,25 @@ def services(request):
     return render(request, "pages/services.html")
 
 
+def order(request):
+    if request.method == "POST":
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+
+        email = request.POST['email']
+        subject = request.POST['subject']
+        phone = request.POST['phone']
+        pickup_date = request.POST['pickup_date']
+        dropoff_date = request.POST['dropoff_date']
+        pickup_location = request.POST['pickup_location']
+        dropoff_location = request.POST['dropoff_location']
+
+        messages.success(
+            request, 'Thank you')
+        return redirect('contact')
+    return render(request, 'pages/contact.html')
+
+
 def contact(request):
     if request.method == "POST":
         name = request.POST['name']

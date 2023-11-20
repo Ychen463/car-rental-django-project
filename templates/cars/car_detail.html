@@ -218,13 +218,29 @@
                             </button>
                           </div>
                           <div class="modal-body">
+                            <form action="{% url 'reserve' %}" method="POST">
+
                             <h5>Location & Date</h5>
                                 <div class="form-group">
-                                    <input type="date" name="pickup_date" class="form-control" placeholder="Pickup Date" required>
-                                    <input type="date" name="dropoff_date" class="form-control" placeholder="Drop-off Date" required>
-                                    <input type="text" name="pickup_location" class="form-control" placeholder="Pick Up Location" required>
-                                    <input type="text" name="dropoff_location" class="form-control" placeholder="Drop Off Location" required>
-                                    <!-- <input type="text" name="car_model" class="form-control" value="{{single_car.model}}" readonly> -->
+                                    <input type="date" name="pickup_date" class="form-control" placeholder="Pickup Date" required id="pickup_date">
+                                    <input type="date" name="dropoff_date" class="form-control" placeholder="Drop-off Date" required id="dropoff_date">
+                                    <!-- Pickup Location -->
+                                    <select name="pickup_location" class="form-control" required>
+                                        <option value="">Select Pick Up Location</option>
+                                            {% for location in pickup_location_serach %}
+                                                <option value="{{ location }}">{{ location }}</option>
+                                            {% endfor %}
+                                    </select>
+
+                                    <!-- Dropoff Location -->
+                                    <select name="dropoff_location" class="form-control" required>
+                                        <option value="">Select Drop Off Location</option>
+                                            {% for location in pickup_location_serach %}
+                                                <option value="{{ location }}">{{ location }}</option>
+                                            {% endfor %}
+
+                                    </select>
+
                                     <div class="form-group">
                                         <input type="text" name="car_title" class="form-control" value="{{single_car.car_title}}" readonly>
                                       </div>
@@ -232,7 +248,7 @@
                                 </div>
                             <!-- Divider -->
                             <hr>
-                            <form action="{% url 'inquiry' %}" method="POST">
+
                                 <h5>Personal Information</h5>
 
                                 {% csrf_token %}
@@ -256,9 +272,7 @@
                                     </div>
                                   </div>
                                 </div>
-                                  
-                                
-                                
+                                     
                                
                                 <div class="form-group">
                                   <label for="name" class="col-form-label">Address</label>

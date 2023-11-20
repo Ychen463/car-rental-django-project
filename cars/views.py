@@ -15,8 +15,13 @@ def cars(request):
         'pickup_location', flat=True).distinct()
     dropoff_location_serach = Car.objects.values_list(
         'dropoff_location', flat=True).distinct()
+    pickup_avail_locations = Car.objects.values_list(
+        'pickup_location', flat=True).all()  # Replace with your actual model and query
+
     pickup_date_search = Car.objects.values_list(
         'pickup_date', flat=True).distinct()
+    pickup_avail_dates = Car.objects.values_list(
+        'pickup_date', flat=True).all()
     dropoff_date_search = Car.objects.values_list(
         'dropoff_date', flat=True).distinct()
 
@@ -41,10 +46,16 @@ def cars(request):
 
 def car_detail(request, id):
     single_car = get_object_or_404(Car, pk=id)
+    pickup_location_serach = Car.objects.values_list(
+        'pickup_location', flat=True).distinct()
+    dropoff_location_serach = Car.objects.values_list(
+        'dropoff_location', flat=True).distinct()
     data = {
         'single_car': single_car,
-
+        'pickup_location_serach': pickup_location_serach,
+        'dropoff_location_serach': dropoff_location_serach,
     }
+
     return render(request, 'cars/car_detail.html', data)
 
 
@@ -54,7 +65,7 @@ def search(request):
     city_search = Car.objects.values_list('city', flat=True).distinct()
     pickup_location_serach = Car.objects.values_list(
         'pickup_location', flat=True).distinct()
-    dropoff_location_serach = Car.objects.values_list(
+    dropoff_location_search = Car.objects.values_list(
         'dropoff_location', flat=True).distinct()
     pickup_date_search = Car.objects.values_list(
         'pickup_date', flat=True).distinct()
@@ -91,11 +102,11 @@ def search(request):
     if 'pickup_date' in request.GET:
         pickup_date = request.GET['pickup_date']
         if pickup_date:
-            cars = cars.filter(pickup_date__iexact=pickup_date)
+            cars = cars.filter(pickup_date__lte=pickup_date)
     if 'dropoff_date' in request.GET:
         dropoff_date = request.GET['dropoff_date']
         if dropoff_date:
-            cars = cars.filter(dropoff_date__iexact=dropoff_date)
+            cars = cars.filter(pickup_date__gte=dropoff_date)
     if 'year' in request.GET:
         year = request.GET['year']
         if year:
@@ -116,6 +127,10 @@ def search(request):
         'cars': cars,
         'model_search': model_search,
         'city_search': city_search,
+        'pickup_location_search': pickup_location_serach,
+        'dropoff_location_search': dropoff_location_search,
+        'pickup_date_search': pickup_date_search,
+        'dropoff_date_search': dropoff_date_search,
         'year_search': year_search,
         'body_style_search': body_style_search,
     }

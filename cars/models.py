@@ -97,6 +97,18 @@ class Car(models.Model):
         ('5', '5'),
         ('6', '6'),
     )
+    office_choices = (
+        ('NewYork', 'New York City Office'),
+        ('LosAngeles', 'Los Angeles Downtown Office'),
+        ('Chicago', 'Chicago Central Office'),
+        ('Houston', 'Houston Branch Office'),
+        ('Phoenix', 'Phoenix Airport Office'),
+        ('Philadelphia', 'Philadelphia City Center Office'),
+        ('SanAntonio', 'San Antonio Suburban Office'),
+        ('SanDiego', 'San Diego Beachside Office'),
+        ('Dallas', 'Dallas Business District Office'),
+        ('SanJose', 'San Jose University Area Office'),
+    )
 
     car_title = models.CharField(max_length=255)
     state = models.CharField(choices=state_choice, max_length=100)
@@ -116,10 +128,12 @@ class Car(models.Model):
     car_photo_3 = models.ImageField(upload_to='photos/%Y/%m/%d/', blank=True)
     car_photo_4 = models.ImageField(upload_to='photos/%Y/%m/%d/', blank=True)
     # New fields for rental details
-    pickup_date = models.DateField(null=True, blank=True)
-    dropoff_date = models.DateField(null=True, blank=True)
-    pickup_location = models.CharField(max_length=255, blank=True)
-    dropoff_location = models.CharField(max_length=255, blank=True)
+    pickup_date = models.DateField(
+        default=datetime.today, null=True, blank=True)
+    dropoff_date = models.DateField(
+        default=datetime.today, null=True, blank=True)
+    pickup_location = models.CharField(choices=office_choices, max_length=100)
+    dropoff_location = models.CharField(choices=office_choices, max_length=100)
 
     features = MultiSelectField(choices=features_choices, max_length=200)
     body_style = models.CharField(max_length=100)
