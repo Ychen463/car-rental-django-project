@@ -3,28 +3,42 @@ from datetime import datetime
 
 from django.shortcuts import redirect, render
 
-from contacts.models import Contact
+from django.contrib.auth.models import User
 from cars.models import Car
 from django.contrib import messages
 # Create your models here.
 
 
 class Order(models.Model):
-    user = models.ForeignKey(Contact, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    car = models.ForeignKey(
+        Car, on_delete=models.CASCADE)
 
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    car_id = models.IntegerField()
     car_title = models.CharField(max_length=100, null=True, blank=True)
     pickup_date = models.DateField(blank=True, default=datetime.now)
     dropoff_date = models.DateField(blank=True, default=datetime.now)
     pickup_location = models.CharField(max_length=100, null=True, blank=True)
     dropoff_location = models.CharField(max_length=100, null=True, blank=True)
+
     city = models.CharField(max_length=100, null=True, blank=True)
     state = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=100, null=True, blank=True)
     create_date = models.DateTimeField(blank=True, default=datetime.now)
+
+    # price = models.DecimalField(
+    #     max_digits=10, decimal_places=2, default=0.00)
+
+    def total_days(self):
+        if self.pickup_date and self.dropoff_date:
+            return (self.dropoff_date - self.pickup_date).days
+        return 0
+
+    def total_amount(self):
+        # Ensure you are accessing the unit_price from the Car model
+        return self.total_days() * self.car.price
 
     def __str__(self):
         return f"Order {self.id} by {self.first_name}"
@@ -46,7 +60,7 @@ class Order(models.Model):
             state = request.POST.get('state')
 
             # Create or update the Order object
-            order, created = Order.objects.update_or_create(
+            created = Order.objects.update_or_create(
                 user_id=user_id,
                 car_id=car_id,
                 defaults={
@@ -62,7 +76,7 @@ class Order(models.Model):
                     'state': state,
                 }
             )
-
+            created.save()
             if created:
                 messages.success(request, 'Reservation created successfully.')
             else:

@@ -31,6 +31,7 @@ def register(request):
         email = request.POST['email']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
+        # user_type = request.POST['user_type']
 
         if password == confirm_password:
             if User.objects.filter(username=username).exists():
@@ -45,11 +46,11 @@ def register(request):
                         first_name=firstname, last_name=lastname, email=email, username=username, password=password)
                     auth.login(request, user)
                     messages.success(request, 'You are now logged in.')
-                    return redirect('dashboard')
                     user.save()
                     messages.success(
                         request, 'You are registered successfully.')
-                    return redirect('login')
+                    return redirect('dashboard')
+
         else:
             messages.error(request, 'Password do not match')
             return redirect('register')
@@ -72,3 +73,7 @@ def logout(request):
         auth.logout(request)
         return redirect('home')
     return redirect('home')
+
+
+def checkout(request):
+    return render(request, 'accounts/checkout.html')

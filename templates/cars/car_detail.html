@@ -36,7 +36,7 @@
                             </h6>
                         </div>
                         <div class="pull-right">
-                            <h3><span>$ {{single_car.price | intcomma}}</span></h3>
+                            <h3><span>$ {{single_car.price | intcomma}}/Day</span></h3>
                         </div>
                     </div>
                     <div id="carDetailsSlider" class="carousel car-details-sliders slide mb-40">
@@ -211,7 +211,6 @@
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="contact-dealer modal-header">
-                            <!-- <h5 class="modal-title" id="reserveModalLabel">Contact Dealer</h5> -->
                             <center><img src="{% static 'img/logos/logo-black-white.png' %}"></center>
                             <button type="button" class="close" data-dismiss="modal">
                               <span>&times;</span>
@@ -219,12 +218,22 @@
                           </div>
                           <div class="modal-body">
                             <form action="{% url 'reserve' %}" method="POST">
-
-                            <h5>Location & Date</h5>
+                            
+                            <h5> </h5>
                                 <div class="form-group">
+                                    <div class="form-group">
+                                        <input type="text" name="car_title" class="form-control" value="{{single_car.car_title}}" readonly>
+                                        </div>
+                                        <img src="{{single_car.car_photo.url}}" class="img-fluid" alt="slider-car">
+                                    </div>
+                                    <!-- Pickup Date -->
+                                    <label for="pickup_date">Pickup Date</label>    
                                     <input type="date" name="pickup_date" class="form-control" placeholder="Pickup Date" required id="pickup_date">
+                                    <!-- Drop-off Date -->
+                                    <label for="dropoff_date">Drop-off Date</label>
                                     <input type="date" name="dropoff_date" class="form-control" placeholder="Drop-off Date" required id="dropoff_date">
                                     <!-- Pickup Location -->
+                                    <label for="pickup_location">Pickup Location</label>
                                     <select name="pickup_location" class="form-control" required>
                                         <option value="">Select Pick Up Location</option>
                                             {% for location in pickup_location_search %}
@@ -233,6 +242,7 @@
                                     </select>
 
                                     <!-- Dropoff Location -->
+                                    <label for="dropoff_location">Dropoff Location</label>
                                     <select name="dropoff_location" class="form-control" required>
                                         <option value="">Select Drop Off Location</option>
                                             {% for location in dropoff_location_search %}
@@ -241,14 +251,10 @@
 
                                     </select>
 
-                                    <div class="form-group">
-                                        <input type="text" name="car_title" class="form-control" value="{{single_car.car_title}}" readonly>
-                                      </div>
-                                    <img src="{{single_car.car_photo.url}}" class="img-fluid" alt="slider-car">
-                                </div>
+                                    
                             <!-- Divider -->
                             <hr>
-
+                                
                                 <h5>Personal Information</h5>
 
                                 {% csrf_token %}
@@ -259,23 +265,35 @@
                                 {% endif %} 
                                 <input type="hidden" name="car_id" value="{{single_car.id}}">
                                 <div class="form-group">
-                                  <!-- <label for="name" class="col-form-label">Hello, My Name is</label> -->
                                   <div class="row">
 
                                     <div class="col">
+                                        <label for="first_name" class="col-form-label">first_name</label>
+
                                       <input type="text" name="first_name" class="form-control" placeholder="First Name"
                                       {% if user.is_authenticated %} value="{{user.first_name}}"  {% endif %} required>
                                     </div>
                                     <div class="col">
+                                        <label for="last_name" class="col-form-label">last_name</label>
                                       <input type="text" name="last_name" class="form-control" placeholder="Last Name"
                                        {% if user.is_authenticated %} value="{{user.last_name}}"  {% endif %} required>
                                     </div>
                                   </div>
                                 </div>
                                      
-                               
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="email" class="col-form-label">Email</label>
+                                      <input type="email" name="email" class="form-control" placeholder="Email Address"
+                                       {% if user.is_authenticated %} value="{{user.email}}"  {% endif %} required>
+                                    </div>
+                                    <div class="col">
+                                        <label for="phone" class="col-form-label">Phone</label>
+                                      <input type="text" name="phone" placeholder="Phone Number (optional)" class="form-control">
+                                    </div>
+                                  </div>
                                 <div class="form-group">
-                                  <label for="name" class="col-form-label">Address</label>
+                                  <label for="address" class="col-form-label">Address</label>
                                   <div class="col">
                                         <input type="text" name="address" class="form-control" placeholder="Address" required>
                                     </div>
@@ -284,20 +302,6 @@
                                     </div>
                                     <div class="col">
                                       <input type="text" name="state" class="form-control" placeholder="State" required>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div class="form-group">
-                                  <div class="row">
-                                    <div class="col">
-                                        <label for="name" class="col-form-label">Email</label>
-                                      <input type="email" name="email" class="form-control" placeholder="Email Address"
-                                       {% if user.is_authenticated %} value="{{user.email}}"  {% endif %} required>
-                                    </div>
-                                    <div class="col">
-                                        <label for="phone" class="col-form-label">Phone</label>
-                                      <input type="text" name="phone" placeholder="Phone Number (optional)" class="form-control">
                                     </div>
                                   </div>
                                 </div>

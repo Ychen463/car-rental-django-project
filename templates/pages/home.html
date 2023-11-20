@@ -17,10 +17,11 @@
           alt="banner"
         />
         <div class="carousel-content container banner-info-2 bi-2 text-left">
-          <h3>Wow Factor Standard</h3>
+          <h3>World on Wheels</h3>
           <h5>
-            Allow us to guide you through the innovative stress<br />
-            free approach in finding your dream car.
+            Embark on New Adventures, Embrace the Joy of Travel – With WOW, <br />
+            Every Journey is a Story Waiting to Unfold. <br />
+            Drive into Your Next Adventure with Confidence and Comfort!
           </h5>
           <a href="services.html" class="btn btn-lg btn-theme">Read more</a>
         </div>
@@ -78,10 +79,7 @@
               <option value="{{location}}">{{location}}</option>
             {% endfor %}
           </select>
-
       </div>
-
-      
     <!-- Pick-up Location -->
     <div class="form-group">
       <select class="form-control search-fields" name="body_style">
@@ -90,19 +88,12 @@
           <option value="{{body_style}}">{{body_style}}</option>
         {% endfor %}
     </select>
-
   </div>
-
-    
-
-
       <!-- Pick-up Date -->
       <div class="form-group">
         <label for="pickup_date">Pick-up Date</label>
           <input type="date" name="pickup_date" class="form-control" required>
       </div>
-
-
       <!-- Search Button -->
       <div class="form-group">
           <button class="btn btn-block button-theme btn-md" type="submit">
@@ -144,7 +135,7 @@
     <!-- Main title -->
     <div class="main-title">
       <h1>Featured <span>Cars</span></h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Monthly Highlights: Explore the Best of WOW's Top Picks for the Month</p>
     </div>
     <!-- Slick slider area start -->
     <div class="slick-slider-area clearfix">
@@ -159,7 +150,7 @@
               <a href="{% url 'car_detail' car.id %}" class="car-img">
                 <div class="tag-2">Featured</div>
                 <div class="price-box">
-                  <span>${{car.price | intcomma}}</span>
+                  <span>${{car.price | intcomma}}/Day</span>
                 </div>
                 <img
                   class="d-block w-100"
@@ -239,7 +230,7 @@
     <!-- Main title -->
     <div class="main-title">
       <h1>Latest <span>Cars</span></h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>New Arrivals: Check Out the Latest Additions to WOW's Fleet for Cutting-Edge Performance and Style</p>
     </div>
     <div class="row">
       {% for car in all_cars %}
@@ -247,7 +238,7 @@
         <div class="car-box">
           <div class="car-thumbnail">
             <a href="{% url 'car_detail' car.id %}" class="car-img">
-              <div class="tag">For Sale</div>
+              <div class="tag">Recommended For You</div>
               <img
                 class="d-block w-100"
                 src="{{car.car_photo.url}}"
@@ -315,7 +306,7 @@
               <p class="cartype">{{car.body_style}}</p>
             </div>
             <div class="pull-right">
-              <p class="price">$ {{car.price | intcomma}}</p>
+              <p class="price">$ {{car.price | intcomma}}/Day</p>
             </div>
           </div>
         </div>

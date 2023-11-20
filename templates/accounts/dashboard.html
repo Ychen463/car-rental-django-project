@@ -23,7 +23,7 @@
 <div class="container mt-50 mb-50">
     {% include 'includes/messages.html' %}
 	<div class="main-title" style="text-align:left !important;">
-            <h1>Welcome <span>{{ order.first_name }}</span></h1>
+            <h1>Welcome <span>{{ user.first_name }}</span></h1>
             <p>Here are the cars that you have ordered</p>
 		</div>
 	{% if orders %}
@@ -35,6 +35,11 @@
 		  <th scope="col">Car Name</th>
 		  <th scope="col">Pick Up Location</th>
 		  <th scope="col">Pick Up Date</th>
+		  <th scope="col">Drop Off Date</th>
+		  <th scope="col">Days in Total</th>
+		  <th scope="col">Unit Price</th>
+		  <th scope="col">Total Amount</th>
+
 
 		  <th scope="col">Action</th>
 		  <th scope="col">Order Create Date</th>
@@ -48,7 +53,12 @@
 		  <td>{{order.car_title}}</td>
 		  <td>{{order.pickup_location}}</td>
 		  <td>{{order.pickup_date}}</td>
-		  <td><a href="{% url 'car_detail' order.car_id %}" class="btn btn-outline-dark">View Car</a></td>
+		  <td>{{order.dropoff_date}}</td>
+		  <td>{{order.total_days}}</td>
+		  <td>{{ order.car.price }}</td>
+        <td>{{ order.total_amount }}</td>
+		<td><a href="{% url 'car_detail' order.car_id %}" class="btn btn-outline-dark">View Car</a></td>
+
 		  <td>{{order.create_date}}</td>
 
 		</tr>
@@ -61,5 +71,39 @@
 </div>
 
 <!--   Dashboard End   -->
+
+<!-- Checkout Section Start -->
+<div class="container mt-50 mb-50">
+    {% include 'includes/messages.html' %}
+	<div class="main-title checkout-section" style="text-align:left !important;">
+            <h1>Checkout</h1>
+            <p>Order Summary</p>
+	</div>
+			<!-- Display order summary -->
+			{% if orders %}
+            <div class="order-summary">              
+                {% for order in orders %}
+                    <p>{{ order.car_title }}: ${{ order.total_amount }}</p>
+                {% endfor %}
+            </div>
+            <div class="promo-code">
+                <h5>Apply Promo Code</h5>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="promo_code" placeholder="Enter promo code">
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                </form>
+            </div>
+            <div class="checkout-button">
+                <button type="button" class="btn btn-success" onclick="location.href=''">Proceed to Checkout</button>
+            </div>
+        {% else %}
+            <p>You have no items to checkout.</p>
+        {% endif %}
+		</div>
+</div>
+
+<!-- Checkout Section End -->
+
 
 {% endblock %}
