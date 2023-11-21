@@ -42,6 +42,8 @@
 
 
 		  <th scope="col">Action</th>
+		  <th scope="col">Checkout</th>
+
 		  <th scope="col">Order Create Date</th>
 
 		</tr>
@@ -58,6 +60,7 @@
 		  <td>{{ order.car.price }}</td>
         <td>{{ order.total_amount }}</td>
 		<td><a href="{% url 'car_detail' order.car_id %}" class="btn btn-outline-dark">View Car</a></td>
+		<td><a href="{% url 'checkout' order.id %}" class="btn btn-outline-dark">Check Out</a></td>
 
 		  <td>{{order.create_date}}</td>
 
@@ -94,6 +97,8 @@
                     <button type="submit" class="btn btn-primary">Apply</button>
                 </form>
             </div>
+			<script src="https://js.stripe.com/v3/"></script>
+
             <div class="checkout-button">
                 <button type="button" class="btn btn-success" onclick="location.href=''">Proceed to Checkout</button>
             </div>

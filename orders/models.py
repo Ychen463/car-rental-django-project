@@ -85,5 +85,5 @@ class Order(models.Model):
             return redirect('/cars/'+car_id)
         else:
             # Handle non-POST request here
-            # return redirect('/cars/'+car_id)
-            return render(request, 'cars/search.html', data)
+            return redirect('/cars/'+car_id)
+            # return render(request, 'cars/search.html', data)
