@@ -21,8 +21,19 @@ class Payment(models.Model):
         max_length=100, choices=STATUS_CHOICES, blank=True, null=True)
     promo_code = models.CharField(max_length=100, blank=True, null=True)
     payment_token = models.CharField(max_length=100, blank=True, null=True)
+    transaction_id = models.CharField(
+        max_length=100, unique=True, blank=True, null=True)
 
-    transaction_id = models.CharField(max_length=100, unique=True)
+    # Assuming standard 16-digit card number
+    card_number = models.CharField(max_length=16, blank=True, null=True)
+    cardholder_name = models.CharField(max_length=100, blank=True, null=True)
+    expiry_month = models.CharField(
+        max_length=2, blank=True, null=True)  # Format 'MM'
+    expiry_year = models.CharField(
+        max_length=4, blank=True, null=True)  # Format 'YYYY'
+    # CVV can be 3 or 4 digits
+    cvv = models.CharField(max_length=4, blank=True, null=True)
+
     create_date = models.DateTimeField(
         auto_now_add=True, blank=True, null=True)
 

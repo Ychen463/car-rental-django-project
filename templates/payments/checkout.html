@@ -23,34 +23,51 @@
 <html>
 <head>
     <title>Checkout</title>
-    <script src="https://js.stripe.com/v3/"></script>
+    
     <!-- Add any other necessary scripts or styles -->
 </head>
 <body>
-    <form action="/your-payment-processing-url/" method="post" id="payment-form">
+    <!-- Display amounts -->
+    <div>
+        <p>Total Amount: ${{ total_amount }}</p>
+        {% if promo_code_applied %}
+        <p>Discounted Amount: ${{ discounted_amount }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Checkout form -->
+    <form action="" method="post">
         {% csrf_token %}
-        <div class="form-row">
-            <label for="card-element">Credit or debit card</label>
-            <div id="card-element">
-                <!-- A Stripe Element will be inserted here. -->
-            </div>
-            <!-- Used to display form errors. -->
-            <div id="card-errors" role="alert"></div>
+        
+        <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" class="form-control" id="cardNumber" name="card_number" placeholder="1234 1234 1234 1234" required>
         </div>
 
-        <button type="submit">Submit Payment</button>
+        <div class="form-group">
+            <label for="cardName">Cardholder Name</label>
+            <input type="text" class="form-control" id="cardName" name="card_name" placeholder="Name on Card" required>
+        </div>
+
+        <div class="form-row">
+            <div class="col">
+                <label for="expiryMonth">Expiry Month</label>
+                <input type="text" class="form-control" id="expiryMonth" name="expiry_month" placeholder="MM" required>
+            </div>
+            <div class="col">
+                <label for="expiryYear">Expiry Year</label>
+                <input type="text" class="form-control" id="expiryYear" name="expiry_year" placeholder="YYYY" required>
+            </div>
+            <div class="col">
+                <label for="cvv">CVV</label>
+                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit Payment</button>
     </form>
-
-    <script>
-        var stripe = Stripe('your-publishable-key');
-        var elements = stripe.elements();
-        var card = elements.create('card');
-        card.mount('#card-element');
-
-        // Handle form submission and Stripe token creation here
-    </script>
+</div>
 </body>
-</html>
 
 <!-- Checkout Section End -->
 

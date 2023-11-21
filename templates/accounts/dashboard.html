@@ -19,29 +19,27 @@
 <!-- Sub Banner end -->
 
 <!--   Dashboard Start   -->
+<script src="{% static 'js/payment_ajax.js' %}"></script>
 
-<div class="container mt-50 mb-50">
+
+<div class="container mt-50 mb-50" >
     {% include 'includes/messages.html' %}
 	<div class="main-title" style="text-align:left !important;">
             <h1>Welcome <span>{{ user.first_name }}</span></h1>
             <p>Here are the cars that you have ordered</p>
 		</div>
 	{% if orders %}
-	
 	<table class="table table-hover">
 	  <thead>
 		<tr>
-		  <th scope="col">S.No</th>
 		  <th scope="col">Car Name</th>
 		  <th scope="col">Pick Up Location</th>
 		  <th scope="col">Pick Up Date</th>
 		  <th scope="col">Drop Off Date</th>
-		  <th scope="col">Days in Total</th>
-		  <th scope="col">Unit Price</th>
 		  <th scope="col">Total Amount</th>
-
-
-		  <th scope="col">Action</th>
+		  <th scope="col">Discounted Amount</th>
+		  <th scope="col">Promo Code</th>
+		  <th scope="col">Status</th>
 		  <th scope="col">Checkout</th>
 
 		  <th scope="col">Order Create Date</th>
@@ -51,19 +49,30 @@
 	  <tbody>
 		{% for order in orders %}
 		<tr>
-		  <th scope="row">{{ forloop.counter }}</th>
-		  <td>{{order.car_title}}</td>
+		  <!-- <th scope="row">{{ forloop.counter }}</th> -->
+		  <td scope="row">
+			<a href="{% url 'car_detail' order.car_id %}">{{ order.car_title }}</a>
+			</td>
+		
 		  <td>{{order.pickup_location}}</td>
 		  <td>{{order.pickup_date}}</td>
 		  <td>{{order.dropoff_date}}</td>
-		  <td>{{order.total_days}}</td>
-		  <td>{{ order.car.price }}</td>
-        <td>{{ order.total_amount }}</td>
-		<td><a href="{% url 'car_detail' order.car_id %}" class="btn btn-outline-dark">View Car</a></td>
-		<td><a href="{% url 'checkout' order.id %}" class="btn btn-outline-dark">Check Out</a></td>
+		  <td>{{order.total_days}}day(s) × ${{ order.total_amount }}/day = ${{ order.car.price }}</td>
+		  <td id="discountedAmount{{ order.id }}">{{ order.discounted_amount }}</td>
+		  <td>
+			<form class="promo-code-form" data-order-id="{{ order.id }}">
+				{% csrf_token %}
+				<input type="text" name="promo_code" placeholder="Enter Promo Code" style="font-size: 12px; padding: 5px; height: 30px;">
+				<button type="submit" class="btn btn-primary btn-sm" style="font-size: 12px; padding: 5px; height: 30px;">Apply</button>
+			</form>
+		</td>
+		<td>{{payment.status}}</td>
+		<td><a class="btn btn-outline-danger checkout-button" data-toggle="modal" data-target="#CheckoutModal" data-order-id="{{ order.id }}" data-action="{% url 'checkout' 0 %}">Check Out</a></td>
 
 		  <td>{{order.create_date}}</td>
+		  
 
+		
 		</tr>
 		{% endfor %}
 	  </tbody>
@@ -71,44 +80,90 @@
 	{% else %}
 		<h4>You have no orders</h4>
 	{% endif %}
+	
+
+<!-- Checkout Modal -->
+
+<div class="modal fade" id="CheckoutModal" role="dialog" >
+	<!-- <script src="https://js.stripe.com/v3/"></script>
+	<script src="{% static 'js/payment.js' %}"></script> -->
+	<div class="modal-body"></div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="{% static 'js/payment_ajax.js' %}"></script>
+
+
+	<div class="modal-dialog" style="margin-top: 180px;">
+	<div class="modal-content">
+		<div class="contact-dealer modal-header">
+		<center><img src="{% static 'img/logos/logo-black-white.png' %}"></center>
+		<button type="button" class="close" data-dismiss="modal">
+			<span>&times;</span>
+		</button>
+		</div>
+		<div class="modal-body">
+		<form id="checkoutForm"  action="{% url 'checkout' 0 %}"  method="POST">
+
+
+			{% csrf_token %}
+		<h5> </h5>
+		<!-- Display amounts -->
+		<div>
+			<!-- <p id="totalAmountModal">Total Amount: ${{ order.total_amount }}</p>
+			<p>Discounted Amount: ${{ order.discounted_amount }}</p> -->
+			<input type="hidden" id="specificOrderIdInput" name="specific_order_id" value="">
+			<p id="totalAmountModal">Total Amount: $0.00</p>
+			<p id="discountedAmountModal">Discounted Amount: $0.00</p>
+
+		</div>
+		<div id="card-element">
+		
+
+		<div class="form-group">
+			
+			<label for="cardNumber">Card Number</label>
+			<input type="text" class="form-control" id="cardNumber" name="card_number" placeholder="1234 1234 1234 1234" required>
+		</div>
+
+		<div class="form-group">
+			<label for="cardName">Cardholder Name</label>
+			<input type="text" class="form-control" id="cardName" name="card_name" placeholder="Name on Card" required>
+		</div>
+
+		<div class="form-row">
+			<div class="col">
+				<label for="expiryMonth">Expiry Month</label>
+				<input type="text" class="form-control" id="expiryMonth" name="expiry_month" placeholder="MM" required>
+			</div>
+			<div class="col">
+				<label for="expiryYear">Expiry Year</label>
+				<input type="text" class="form-control" id="expiryYear" name="expiry_year" placeholder="YYYY" required>
+			</div>
+			<div class="col">
+				<label for="cvv">CVV</label>
+				<input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" required>
+			</div>
+		</div>
+
+		<button type="submit" class="btn btn-primary mt-3">Submit Payment</button>
+		
+	</form>
+	</div>
+	<div id="card-errors" role="alert"></div>
+
+	</div>
+		</div>
+	</div>
+	</div>
+</div>
+
+
+<!-- Checkout Modal -->
+
 </div>
 
 <!--   Dashboard End   -->
 
-<!-- Checkout Section Start -->
-<div class="container mt-50 mb-50">
-    {% include 'includes/messages.html' %}
-	<div class="main-title checkout-section" style="text-align:left !important;">
-            <h1>Checkout</h1>
-            <p>Order Summary</p>
-	</div>
-			<!-- Display order summary -->
-			{% if orders %}
-            <div class="order-summary">              
-                {% for order in orders %}
-                    <p>{{ order.car_title }}: ${{ order.total_amount }}</p>
-                {% endfor %}
-            </div>
-            <div class="promo-code">
-                <h5>Apply Promo Code</h5>
-                <form action="" method="post">
-                    {% csrf_token %}
-                    <input type="text" name="promo_code" placeholder="Enter promo code">
-                    <button type="submit" class="btn btn-primary">Apply</button>
-                </form>
-            </div>
-			<script src="https://js.stripe.com/v3/"></script>
-
-            <div class="checkout-button">
-                <button type="button" class="btn btn-success" onclick="location.href=''">Proceed to Checkout</button>
-            </div>
-        {% else %}
-            <p>You have no items to checkout.</p>
-        {% endif %}
-		</div>
-</div>
-
-<!-- Checkout Section End -->
 
 
 {% endblock %}
+

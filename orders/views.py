@@ -8,6 +8,7 @@ import uuid
 
 def reserve(request):
     if request.method == 'POST':
+
         car_id = request.POST['car_id']
         car_title = request.POST['car_title']
         first_name = request.POST['first_name']
@@ -34,13 +35,15 @@ def reserve(request):
 
         order = Order(car_id=car_id, car_title=car_title,
                       user_id=user_id,
-                      first_name=first_name, last_name=last_name,  city=city, state=state, email=email, phone=phone,
+                      first_name=first_name, last_name=last_name,  city=city, state=state, email=email,
+                      phone=phone, promo_code_applied=request.order.promo_code_applied,
                       pickup_date=pickup_date, dropoff_date=dropoff_date, pickup_location=pickup_location, dropoff_location=dropoff_location)
 
         order.save()
         messages.success(
             request, 'Your order has been submitted, see you shortly.')
-        return redirect('/accounts/dashboard')
+        # return redirect('/accounts/dashboard')
+        return render(request, '/accounts/dashboard.html', {'order': order,'order_id': order_id})
 
 
 def generate_visitor_id():

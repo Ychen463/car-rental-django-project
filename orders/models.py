@@ -26,6 +26,8 @@ class Order(models.Model):
     state = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=100, null=True, blank=True)
+    promo_code_applied = models.BooleanField(default=False)
+
     create_date = models.DateTimeField(blank=True, default=datetime.now)
 
     # price = models.DecimalField(
