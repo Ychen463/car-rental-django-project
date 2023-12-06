@@ -8,62 +8,78 @@ from django.contrib import messages
 
 from .models import Payment, PromoCode, Order
 # from orders.models import Order
-import stripe
+# import stripe
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-def checkout(request, order_id, promo_code):
-    # Logic to process checkout
+def checkout(request, order_id):
+    # try:
     order = Order.objects.get(id=order_id)
+    discounted_amount = 0.0  # Initialize the discounted amount
 
     if request.method == 'POST':
         # Retrieve Stripe token and other payment information from the form
         # token = request.POST.get('stripeToken')
 
-        try:
-            # Calculate total amount (consider applying discounts, taxes, etc.)
-            # Assuming you have a method to calculate total
-            total_amount = order.total_amount()
-            # Get data from the form
-            card_number = request.POST.get('card_number')
-            card_name = request.POST.get('card_name')
-            expiry_month = request.POST.get('expiry_month')
-            expiry_year = request.POST.get('expiry_year')
-            cvv = request.POST.get('cvv')
-            if request.user.is_authenticated:
-                user_id = request.user.id
-            else:
-                # User is not logged in, assign a default or generated user ID
-                user_id = generate_visitor_id()
+        # Calculate total amount (consider applying discounts, taxes, etc.)
+        total_amount = order.total_amount()
 
-            # Create a Payment record
-            payment = Payment.objects.create(
-                order=order,
-                amount=total_amount,
-                # transaction_id=charge.id
-                card_number=card_number,
-                cardholder_name=card_name,
-                expiry_month=expiry_month,
-                expiry_year=expiry_year,
-                cvv=cvv
-            )
+        # Get data from the form
+        card_number = request.POST.get('card_number')
+        card_name = request.POST.get('card_name')
+        expiry_month = request.POST.get('expiry_month')
+        expiry_year = request.POST.get('expiry_year')
+        cvv = request.POST.get('cvv')
 
-            # Additional logic for successful payment (e.g., updating order status, sending confirmation emails)
-            payment.save()
-            # Redirect to a success page
-            return redirect('/accounts/dashboard')
+        if request.user.is_authenticated:
+            user_id = request.user.id
+        else:
+            # User is not logged in, assign a default or generated user ID
+            user_id = generate_visitor_id()
 
-        except stripe.error.CardError as e:
-            #     # Handle card error
-            context = {'error_message': str(e)}
+        # Check if discounted amount is available from apply_promo_code
+        if hasattr(request, 'discounted_amount'):
+            discounted_amount = request.discounted_amount
 
-            return render(request, '/accounts/dashboard', context)
-    messages.success(
-        request, 'Your order has been submitted, see you shortly.')
-    # For GET request, render checkout page
-    # return render(request, 'payments/checkout.html', {'order': order})
-    redirect('/accounts/dashboard')
+        if discounted_amount != 0:
+            amount = discounted_amount
+        else:
+            amount = total_amount
+        # Create a Payment record
+        payment = Payment.objects.create(
+            order=order,
+            amount=amount,
+            card_number=card_number,
+            cardholder_name=card_name,
+            expiry_month=expiry_month,
+            status="Completed",
+            expiry_year=expiry_year,
+            cvv=cvv,
+            discounted_amount=discounted_amount  # Save discounted amount
+        )
+
+        # Additional logic for successful payment (e.g., updating order status, sending confirmation emails)
+        payment.save()
+        messages.success(
+            request, 'Your order has been submitted, see you shortly.')
+
+        # Redirect to a success page
+        # Prepare context data for rendering
+        context = {
+            'order': order,
+            'payment': payment,
+            'user': request.user
+        }
+        return render(request, 'accounts/dashboard.html', context)
+
+    # except stripe.error.CardError as e:
+    #     # Handle card error
+    #     context = {'error_message': str(e)}
+    #     return render(request, '/accounts/dashboard', context)
+
+    # For GET request or if there's an error, redirect to the dashboard
+    return redirect('/accounts/dashboard')
 
 
 def generate_visitor_id():
@@ -103,6 +119,9 @@ def apply_promo_code(request, order_id):
             print("discount amount:", order.discounted_amount)
 
             order.save()
+
+            # Store the discounted amount in the request object
+            request.discounted_amount = new_total
 
             return JsonResponse({'success': True, 'new_total': new_total,  'promo_code_applied': True})
         except PromoCode.DoesNotExist:

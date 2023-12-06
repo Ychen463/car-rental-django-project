@@ -16,6 +16,10 @@ class Payment(models.Model):
         Order, on_delete=models.CASCADE, blank=True, null=True)
     amount = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
+    # Add the discounted_amount field
+    discounted_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0.00)
+
     # e.g., 'Pending', 'Completed', 'Failed'
     status = models.CharField(
         max_length=100, choices=STATUS_CHOICES, blank=True, null=True)

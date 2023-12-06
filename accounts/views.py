@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
+
 from orders.models import Order
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -31,7 +32,7 @@ def register(request):
         email = request.POST['email']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
-        # user_type = request.POST['user_type']
+        user_type = request.POST['user_type']
 
         if password == confirm_password:
             if User.objects.filter(username=username).exists():

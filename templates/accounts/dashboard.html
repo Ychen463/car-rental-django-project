@@ -67,7 +67,7 @@
 			</form>
 		</td>
 		<td>{{payment.status}}</td>
-		<td><a class="btn btn-outline-danger checkout-button" data-toggle="modal" data-target="#CheckoutModal" data-order-id="{{ order.id }}" data-action="{% url 'checkout' 0 %}">Check Out</a></td>
+		<td><a class="btn btn-outline-danger checkout-button" data-toggle="modal" data-target="#CheckoutModal" data-order-id="{{ order.id }}" data-action="{% url 'checkout' order.id %}">Check Out</a></td>
 
 		  <td>{{order.create_date}}</td>
 		  
@@ -108,8 +108,7 @@
 		<h5> </h5>
 		<!-- Display amounts -->
 		<div>
-			<!-- <p id="totalAmountModal">Total Amount: ${{ order.total_amount }}</p>
-			<p>Discounted Amount: ${{ order.discounted_amount }}</p> -->
+			
 			<input type="hidden" id="specificOrderIdInput" name="specific_order_id" value="">
 			<p id="totalAmountModal">Total Amount: $0.00</p>
 			<p id="discountedAmountModal">Discounted Amount: $0.00</p>

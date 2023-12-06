@@ -1,5 +1,8 @@
 from django.db import models
 from datetime import datetime
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
+from django.db import models
 
 # Create your models here.
 
@@ -12,14 +15,16 @@ USER_TYPE_CHOICES = [
 
 
 class Account(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, blank=True, default=1)
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
     phone = models.CharField(max_length=100)
-    message = models.TextField(blank=True)
-    user_id = models.IntegerField(blank=True)
+    # user_id = models.IntegerField(blank=True)
     create_date = models.DateTimeField(blank=True, default=datetime.now)
     user_type = models.CharField(
         max_length=10,
