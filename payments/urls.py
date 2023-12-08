@@ -7,9 +7,6 @@ urlpatterns = [
          views.remove_order, name='remove_order'),
     path('apply_promo_code/<int:order_id>/',
          views.apply_promo_code, name='apply_promo_code'),
-
-    # path('payments/apply_promo_code/<int:order_id>/',
-    #      views.apply_promo_code, name='apply_promo_code'),
     path('config/', views.stripe_config),  # new
 
 

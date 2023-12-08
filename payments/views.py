@@ -1,3 +1,4 @@
+from decimal import Decimal
 from unittest import loader
 import uuid
 from django.conf import settings
@@ -14,27 +15,29 @@ from .models import Payment, PromoCode, Order
 
 
 def checkout(request, order_id):
-    # try:
     order = Order.objects.get(id=order_id)
-    # Calculate the total amount
     total_amount = order.total_amount()
-    discounted_amount = total_amount
-    # discounted_amount = 0.0  # Initialize the discounted amount
+
+   # Initialize the promo code and discounted amount
+    promo_code = None
+    discounted_amount = None
+
     # Check if the order has already been paid
     if order.status == 'Completed':  # Replace 'paid' with your actual status value for a paid order
         messages.error(
             request, "This order payment has already been completed.")
-        # Redirect to the dashboard or an appropriate page
         return redirect('/accounts/dashboard')
 
     if request.method == 'POST':
-
         card_number = request.POST.get('card_number')
         card_name = request.POST.get('card_name')
         expiry_month = request.POST.get('expiry_month')
         expiry_year = request.POST.get('expiry_year')
         cvv = request.POST.get('cvv')
-        promo_code_input = request.POST.get('promo_code', None)
+
+        # Retrieve promo code and discounted amount from the form
+        promo_code = request.POST.get('promo_code', None)
+        discounted_amount = request.POST.get('discounted_amount', total_amount)
 
         if request.user.is_authenticated:
             user_id = request.user.id
@@ -43,10 +46,10 @@ def checkout(request, order_id):
             user_id = generate_visitor_id()
 
         # Apply promo code if available
-        if promo_code_input:
+        if promo_code:
             try:
                 promo_code_obj = PromoCode.objects.get(
-                    promo_code=promo_code_input, is_active=True)
+                    promo_code=promo_code, is_active=True)
                 if promo_code_obj.is_valid():
                     discount = (
                         promo_code_obj.discount_percentage * 0.01) * total_amount
@@ -60,9 +63,9 @@ def checkout(request, order_id):
         payment = Payment.objects.create(
             order=order,
             amount=total_amount,
-            discounted_amount=discounted_amount,  # Save discounted amount
-            promo_code=promo_code_input if promo_code_input else "",  # Save promo code
-
+            # Save discounted amount
+            discounted_amount=discounted_amount,
+            promo_code=promo_code,
             card_number=card_number,
             cardholder_name=card_name,
             expiry_month=expiry_month,
@@ -78,16 +81,6 @@ def checkout(request, order_id):
         messages.success(
             request, 'Your order has been submitted, see you shortly.')
 
-        # Redirect to a success page
-        # Prepare context data for rendering
-        # context = {
-        #     'order': order,
-        #     'payment': payment,
-        #     'user': request.user
-        # }
-        # return render(request, 'accounts/dashboard.html', context)
-        # Redirect to the dashboard instead of rendering it directly
-        # return redirect('/accounts/dashboard')
     return redirect('/accounts/dashboard')
 
 

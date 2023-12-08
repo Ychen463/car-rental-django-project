@@ -19,7 +19,6 @@
 <!-- Sub Banner end -->
 
 <!--   Dashboard Start   -->
-<script src="{% static 'js/payment_ajax.js' %}"></script>
 
 
 <div class="container mt-50 mb-50" >
@@ -58,12 +57,15 @@
 		  <td>{{order.pickup_date}}</td>
 		  <td>{{order.dropoff_date}}</td>
 		  <td>{{order.total_days}}day(s) × ${{ order.car.price }}/day = ${{ order.total_amount }}</td>
-		  <td id="discountedAmount{{ order.id }}">{{ order.discounted_amount }}</td>
+		  <td id="discountedAmount{{ order.id }}"></td>
 		  <td>
 			<form class="promo-code-form" data-order-id="{{ order.id }}">
 				{% csrf_token %}
 				<input type="text" name="promo_code" placeholder="Enter Promo Code" style="font-size: 12px; padding: 5px; height: 30px;">
 				<button type="submit" class="btn btn-primary btn-sm" style="font-size: 12px; padding: 5px; height: 30px;">Apply</button>
+				<!-- Add a hidden input field to store the promo code -->
+				<input type="hidden" name="hidden_promo_code" value="" id="hiddenPromoCode{{ order.id }}">
+    
 			</form>
 		</td>
 		<td>
@@ -81,8 +83,8 @@
 			data-target="#CheckoutModal" 
 			data-order-id="{{ order.id }}" 
 			data-action="{% url 'checkout' order.id %}"
-			data-discounted-amount="{{ order.discounted_amount }}"
-			data-promo-code="{{ order.promo_code }}"
+			data-discounted-amount="hiddenPromoCode{{ order.id }}"
+			data-promo-code="hiddenPromoCode{{ order.id }}"
 			>Check Out</a></td>
 
 		  <td>{{order.create_date}}</td>
@@ -91,21 +93,18 @@
 		
 		</tr>
 		{% endfor %}
+
 	  </tbody>
 	</table>
 	{% else %}
 		<h4>You have no orders</h4>
 	{% endif %}
-	
+
 
 <!-- Checkout Modal -->
 
 <div class="modal fade" id="CheckoutModal" role="dialog" >
-	<!-- <script src="https://js.stripe.com/v3/"></script>
-	<script src="{% static 'js/payment.js' %}"></script> -->
 	<div class="modal-body"></div>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="{% static 'js/payment_ajax.js' %}"></script>
 
 
 	<div class="modal-dialog" style="margin-top: 180px;">
@@ -117,19 +116,19 @@
 		</button>
 		</div>
 		<div class="modal-body">
-		<form id="checkoutForm"  action="{% url 'checkout' 0 %}"  method="POST">
+			
 
+		<form id="checkoutForm"    method="POST">
+			<input type="hidden" name="promo_code" id="promoCodeInput" value="">
+			<input type="hidden" name="discounted_amount" id="discountedAmountInput" value="">
 
 			{% csrf_token %}
 		<h5> </h5>
-		<!-- Display amounts -->
-		<div>
-			
-			<input type="hidden" id="specificOrderIdInput" name="specific_order_id" value="">
-			<p id="discountedAmount{{ order.id }}">Discounted Amount: {{ order.discounted_amount }}</p>
-		</div>
-		<div id="card-element">
-		
+		<!-- Display the Promo Code and Discounted Amount if promo_code is not None -->
+			<div id="rowDataDisplay" style="display: none;">
+				<p><strong>Promo Code:</strong> <span id="promoCode"></span></p>
+				<p><strong>Discounted Amount:</strong> <span id="discountedAmount"></span></p>
+			</div>
 
 		<div class="form-group">
 			
@@ -173,6 +172,49 @@
 <!-- Checkout Modal -->
 
 </div>
+<script>
+
+document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('checkout-button')) {
+        const orderID = e.target.getAttribute('data-order-id');
+		const promoCodeInput = document.querySelector('input[name="promo_code"]');
+        const discountedAmountElement = document.getElementById(`discountedAmount${orderID}`);
+		const promoCode = promoCodeInput.value;
+        const discountedAmount = discountedAmountElement.textContent;
+        
+        
+        
+	
+
+		// Check if promoCode is not None
+        if (promoCode !== 'None') {
+            document.getElementById('promoCode').textContent = promoCode;
+        	document.getElementById('discountedAmount').textContent = discountedAmount;
+
+			// Set the promoCode and discountedAmount in the hidden form fields
+			document.getElementById('promoCodeInput').value = promoCode;
+        	document.getElementById('discountedAmountInput').value = discountedAmount;
+			// Display the hidden div
+			document.getElementById('rowDataDisplay').style.display = 'block';
+
+        } else {
+            // If promoCode is None, hide the sections
+            document.getElementById('rowDataDisplay').style.display = 'none';
+        }
+
+
+        // Set the form's action attribute to the checkout URL with the orderID
+        document.getElementById('checkoutForm').action = `/payments/checkout/${orderID}/`;
+
+        // Show the modal
+        $('#CheckoutModal').modal('show');
+    }
+});
+
+</script>
+
+	
+<script src="{% static 'js/payment_ajax.js' %}"></script>
 
 <!--   Dashboard End   -->
 
