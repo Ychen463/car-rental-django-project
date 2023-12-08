@@ -2,7 +2,7 @@ from unittest import loader
 import uuid
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.csrf import csrf_exempt  # new
 from django.contrib import messages
 
@@ -16,21 +16,25 @@ from .models import Payment, PromoCode, Order
 def checkout(request, order_id):
     # try:
     order = Order.objects.get(id=order_id)
-    discounted_amount = 0.0  # Initialize the discounted amount
+    # Calculate the total amount
+    total_amount = order.total_amount()
+    discounted_amount = total_amount
+    # discounted_amount = 0.0  # Initialize the discounted amount
+    # Check if the order has already been paid
+    if order.status == 'Completed':  # Replace 'paid' with your actual status value for a paid order
+        messages.error(
+            request, "This order payment has already been completed.")
+        # Redirect to the dashboard or an appropriate page
+        return redirect('/accounts/dashboard')
 
     if request.method == 'POST':
-        # Retrieve Stripe token and other payment information from the form
-        # token = request.POST.get('stripeToken')
 
-        # Calculate total amount (consider applying discounts, taxes, etc.)
-        total_amount = order.total_amount()
-
-        # Get data from the form
         card_number = request.POST.get('card_number')
         card_name = request.POST.get('card_name')
         expiry_month = request.POST.get('expiry_month')
         expiry_year = request.POST.get('expiry_year')
         cvv = request.POST.get('cvv')
+        promo_code_input = request.POST.get('promo_code', None)
 
         if request.user.is_authenticated:
             user_id = request.user.id
@@ -38,47 +42,52 @@ def checkout(request, order_id):
             # User is not logged in, assign a default or generated user ID
             user_id = generate_visitor_id()
 
-        # Check if discounted amount is available from apply_promo_code
-        if hasattr(request, 'discounted_amount'):
-            discounted_amount = request.discounted_amount
+        # Apply promo code if available
+        if promo_code_input:
+            try:
+                promo_code_obj = PromoCode.objects.get(
+                    promo_code=promo_code_input, is_active=True)
+                if promo_code_obj.is_valid():
+                    discount = (
+                        promo_code_obj.discount_percentage * 0.01) * total_amount
+                    discounted_amount = total_amount - discount
+                else:
+                    messages.error(
+                        request, 'Promo code is not valid or expired')
+            except PromoCode.DoesNotExist:
+                messages.error(request, 'Invalid promo code')
 
-        if discounted_amount != 0:
-            amount = discounted_amount
-        else:
-            amount = total_amount
-        # Create a Payment record
         payment = Payment.objects.create(
             order=order,
-            amount=amount,
+            amount=total_amount,
+            discounted_amount=discounted_amount,  # Save discounted amount
+            promo_code=promo_code_input if promo_code_input else "",  # Save promo code
+
             card_number=card_number,
             cardholder_name=card_name,
             expiry_month=expiry_month,
-            status="Completed",
             expiry_year=expiry_year,
             cvv=cvv,
-            discounted_amount=discounted_amount  # Save discounted amount
         )
 
         # Additional logic for successful payment (e.g., updating order status, sending confirmation emails)
         payment.save()
+
+        order.status = 'Completed'  # Update this according to your defined status choices
+        order.save()
         messages.success(
             request, 'Your order has been submitted, see you shortly.')
 
         # Redirect to a success page
         # Prepare context data for rendering
-        context = {
-            'order': order,
-            'payment': payment,
-            'user': request.user
-        }
-        return render(request, 'accounts/dashboard.html', context)
-
-    # except stripe.error.CardError as e:
-    #     # Handle card error
-    #     context = {'error_message': str(e)}
-    #     return render(request, '/accounts/dashboard', context)
-
-    # For GET request or if there's an error, redirect to the dashboard
+        # context = {
+        #     'order': order,
+        #     'payment': payment,
+        #     'user': request.user
+        # }
+        # return render(request, 'accounts/dashboard.html', context)
+        # Redirect to the dashboard instead of rendering it directly
+        # return redirect('/accounts/dashboard')
     return redirect('/accounts/dashboard')
 
 
@@ -94,7 +103,6 @@ def generate_visitor_id():
 
 
 def apply_promo_code(request, order_id):
-    # Assuming this is an AJAX request
     if request.method == 'POST':
         promo_code_input = request.POST.get('promo_code', "")
 
@@ -103,34 +111,40 @@ def apply_promo_code(request, order_id):
             promo_code_obj = PromoCode.objects.get(
                 promo_code=promo_code_input, is_active=True)
 
-            # Logic to apply promo code (e.g., updating order total)
-            if not promo_code_obj.is_valid():
-
+            if promo_code_obj.is_valid():
+                # Calculate the potential discount
+                discount_percentage = promo_code_obj.discount_percentage
+                new_total = order.total_amount()*(1 - (discount_percentage * 0.01))
+                return JsonResponse({
+                    'success': True,
+                    'new_total': new_total,
+                    'promo_code_applied': True
+                })
+            else:
                 return JsonResponse({'success': False, 'error': 'Promo code is not valid or expired'})
-
-            # Calculate the discount
-            print("Total amount:", order.total_amount())
-
-            new_total = (promo_code_obj.discount_percentage *
-                         0.01) * order.total_amount()
-            order.discounted_amount = new_total
-            order.promo_code_applied = True
-
-            print("discount amount:", order.discounted_amount)
-
-            order.save()
-
-            # Store the discounted amount in the request object
-            request.discounted_amount = new_total
-
-            return JsonResponse({'success': True, 'new_total': new_total,  'promo_code_applied': True})
         except PromoCode.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Invalid promo code'})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
-# Add a view for successful payment
-# new
+
+def remove_order(request, order_id):
+    # Ensure only authenticated users can remove orders
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in to remove an order.")
+        return redirect('login')
+    # order = Order.objects.get(id=order_id)
+
+    order = get_object_or_404(Order, id=order_id)
+
+    # Check if the order is already completed, prevent removal
+    if order.status == "Completed":
+        messages.error(request, "Completed orders cannot be removed.")
+    else:
+        order.delete()
+        messages.success(request, "Order removed successfully.")
+
+    return redirect('/accounts/dashboard')
 
 
 @csrf_exempt

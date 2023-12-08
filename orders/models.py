@@ -13,6 +13,12 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(
         Car, on_delete=models.CASCADE)
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Completed', 'Completed'),
+        ('Failed', 'Failed'),
+        # Add more statuses if needed
+    ]
 
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -29,6 +35,9 @@ class Order(models.Model):
     promo_code_applied = models.BooleanField(default=False)
 
     create_date = models.DateTimeField(blank=True, default=datetime.now)
+    # Add the status field
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default='Pending')
 
     # price = models.DecimalField(
     #     max_digits=10, decimal_places=2, default=0.00)

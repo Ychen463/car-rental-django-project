@@ -6,23 +6,14 @@ from django.utils import timezone
 
 
 class Payment(models.Model):
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Completed', 'Completed'),
-        ('Failed', 'Failed'),
-        # Add more statuses if needed
-    ]
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, blank=True, null=True)
     amount = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
     # Add the discounted_amount field
     discounted_amount = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0.00)
+        max_digits=10, decimal_places=2, default=amount)
 
-    # e.g., 'Pending', 'Completed', 'Failed'
-    status = models.CharField(
-        max_length=100, choices=STATUS_CHOICES, blank=True, null=True)
     promo_code = models.CharField(max_length=100, blank=True, null=True)
     payment_token = models.CharField(max_length=100, blank=True, null=True)
     transaction_id = models.CharField(
@@ -59,15 +50,18 @@ class PromoCode(models.Model):
         return self.promo_code
 
     def is_valid(self):
-        # Logic to check if the promo code is valid (e.g., based on date and max uses)
-        # ...
-        return True  # Or False based on conditions
+        current_time = timezone.now()
+        return (
+            self.is_active and
+            self.valid_from <= current_time <= self.valid_to and
+            self.used_times < self.max_uses
+        )
 
 
-def is_valid(self):
-    current_time = timezone.now()
-    return (
-        self.is_active and
-        self.valid_from <= current_time <= self.valid_to and
-        self.used_times < self.max_uses
-    )
+# def is_valid(self):
+#     current_time = timezone.now()
+#     return (
+#         self.is_active and
+#         self.valid_from <= current_time <= self.valid_to and
+#         self.used_times < self.max_uses
+#     )

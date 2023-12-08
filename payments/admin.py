@@ -4,8 +4,8 @@ from .models import Payment, PromoCode  # Combined import statement
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('order', 'amount', 'status', 'promo_code', 'create_date')
-    list_filter = ('status',)
+    list_display = ('id', 'amount', 'promo_code', 'create_date')
+    list_filter = ()
     search_fields = ('order__id', 'promo_code')
     date_hierarchy = 'create_date'
 

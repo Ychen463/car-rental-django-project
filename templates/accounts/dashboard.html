@@ -57,7 +57,7 @@
 		  <td>{{order.pickup_location}}</td>
 		  <td>{{order.pickup_date}}</td>
 		  <td>{{order.dropoff_date}}</td>
-		  <td>{{order.total_days}}day(s) × ${{ order.total_amount }}/day = ${{ order.car.price }}</td>
+		  <td>{{order.total_days}}day(s) × ${{ order.car.price }}/day = ${{ order.total_amount }}</td>
 		  <td id="discountedAmount{{ order.id }}">{{ order.discounted_amount }}</td>
 		  <td>
 			<form class="promo-code-form" data-order-id="{{ order.id }}">
@@ -66,8 +66,24 @@
 				<button type="submit" class="btn btn-primary btn-sm" style="font-size: 12px; padding: 5px; height: 30px;">Apply</button>
 			</form>
 		</td>
-		<td>{{payment.status}}</td>
-		<td><a class="btn btn-outline-danger checkout-button" data-toggle="modal" data-target="#CheckoutModal" data-order-id="{{ order.id }}" data-action="{% url 'checkout' order.id %}">Check Out</a></td>
+		<td>
+			{% if order.status == "Completed" %}
+				<span style="color: green; font-weight: bold;">{{ order.status }}</span>
+			{% else %}
+			<span style="color: red; font-weight: light;">{{ order.status }}</span>
+			<!-- Add a link or button to remove the order -->
+			<a href="{% url 'remove_order' order.id %}" style="text-decoration: underline; font-size: small;">Remove</a>        
+			{% endif %}
+		</td>
+		
+		<td><a class="btn btn-outline-danger checkout-button" 
+			data-toggle="modal" 
+			data-target="#CheckoutModal" 
+			data-order-id="{{ order.id }}" 
+			data-action="{% url 'checkout' order.id %}"
+			data-discounted-amount="{{ order.discounted_amount }}"
+			data-promo-code="{{ order.promo_code }}"
+			>Check Out</a></td>
 
 		  <td>{{order.create_date}}</td>
 		  
@@ -110,9 +126,7 @@
 		<div>
 			
 			<input type="hidden" id="specificOrderIdInput" name="specific_order_id" value="">
-			<p id="totalAmountModal">Total Amount: $0.00</p>
-			<p id="discountedAmountModal">Discounted Amount: $0.00</p>
-
+			<p id="discountedAmount{{ order.id }}">Discounted Amount: {{ order.discounted_amount }}</p>
 		</div>
 		<div id="card-element">
 		

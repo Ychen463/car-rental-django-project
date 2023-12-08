@@ -24,11 +24,7 @@ def reserve(request):
 
         if request.user.is_authenticated:
             user_id = request.user.id
-            # has_contacted = Contact.objects.all().filter(car_id=car_id, user_id=user_id)
-            # if has_contacted:
-            #     messages.error(
-            #         request, 'You have already made an inquiry about this car. Please wait until we get back to you.')
-            #     return redirect('/cars/'+car_id)
+
         else:
             # User is not logged in, assign a default or generated user ID
             user_id = generate_visitor_id()
@@ -43,8 +39,8 @@ def reserve(request):
         order.save()
         messages.success(
             request, 'Your order has been submitted, see you shortly.')
-        # return redirect('/accounts/dashboard')
-        return render(request, 'accounts/dashboard.html', {'order': order, 'order_id': order.id})
+        return redirect('/accounts/dashboard')
+        # return render(request, 'accounts/dashboard.html', {'order': order, 'order_id': order.id})
 
 
 def generate_visitor_id():

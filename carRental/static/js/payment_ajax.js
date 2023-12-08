@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Handle the response
                 var responseElement = document.getElementById('promoResponse' + orderId);
                 if(data.success) {
-                    // Update the discounted amount on the page
-                    // var discountedAmountElement = document.getElementById('discountedAmount' + orderId);
-                    // discountedAmountElement.innerText = 'Current Discount: $' + data.new_total;
                     document.getElementById('discountedAmount' + orderId).innerText = '$' + data.new_total;
                     document.getElementById('discountedAmount_checkout' + orderId).innerText = '$' + data.new_total;
 
@@ -68,9 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Set the form action to the data-action URL
             checkoutForm.action = dataAction;
-        });
+               });
     });
 });
-
-
 
